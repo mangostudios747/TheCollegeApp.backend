@@ -1,20 +1,31 @@
-extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.0",
-        import: ["@key"])
-
 type Query {
-  "The full list of locations presented by the Interplanetary Space Tourism department"
-  locations: [Location!]!
-  "The details of a specific location"
-  location(id: ID!): Location
+    allTasks: [Task!]!
+    task(id: ID!): Task
+    test: String
 }
 
-type Location @key(fields: "id"){
-  id: ID!
-  "The name of the location"
-  name: String!
-  "A short description about the location"
-  description: String!
-  "The location's main photo as a URL"
-  photo: String!
+type Mutation {
+    createTask(text: String!, parentID: ID, tags: [ID!]): Task
+    createTag(name: String!, color: String): Tag
+    signUp(email: String!, password: String!, username: String!): String # JWT
+}
+
+type User {
+    id: ID!
+    username: String!
+    email: String!
+}
+
+type Tag {
+    id: ID!
+    name: String!
+    color: String! # not sure how to make this a hex code
+}
+
+type Task {
+    id: ID!
+    text: String!
+    tags: [Tag!]!
+    parent: Task
+    children: [Task!]!
 }
