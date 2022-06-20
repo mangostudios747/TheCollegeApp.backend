@@ -13,7 +13,6 @@ const authDB = mdb.then(client => client.db("auth"))
 const tasksCollection = contentDB.then(db => db.collection("tasks"))
 const tagsCollection = contentDB.then(db => db.collection("tags"))
 const usersCollection = authDB.then(db=>db.collection("users"));
-const passwordsCollection = authDB.then(db=>db.collection("passwords"))
 
 class Tasks extends MongoDataSource {
     getTask(id) {
@@ -31,5 +30,5 @@ class Users extends MongoDataSource {
 }
 
 module.exports = {
-    tagsCollection, tasksCollection, genID, Tasks, mdb , usersCollection, passwordsCollection
+    tagsCollection, tasksCollection, genID, Users, mdb , usersCollection
 }

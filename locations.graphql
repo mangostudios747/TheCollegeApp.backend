@@ -1,31 +1,57 @@
+scalar Date
 type Query {
-    allTasks: [Task!]!
-    task(id: ID!): Task
     test: String
 }
 
+type Temp {
+    jwt: ID!
+
+}
+
 type Mutation {
-    createTask(text: String!, parentID: ID, tags: [ID!]): Task
-    createTag(name: String!, color: String): Tag
-    signUp(email: String!, password: String!, username: String!): String # JWT
+    createUserAndSendVerification(email: String!, password: String!, username: String!): Temp # JWT
+    verifyUserEmail(token: ID!): User
+    login(username: String!, password: String!): User
 }
 
 type User {
     id: ID!
     username: String!
     email: String!
+    pwHash: String!
+    applications: [Application!]
 }
 
-type Tag {
-    id: ID!
-    name: String!
-    color: String! # not sure how to make this a hex code
+enum Likelihood {
+    REACH
+    TARGET
+    SAFETY
 }
 
-type Task {
-    id: ID!
-    text: String!
-    tags: [Tag!]!
-    parent: Task
-    children: [Task!]!
+type Deadline {
+    exists: Boolean!
+    due: Date
+    decision: Date
+}
+
+type DeadlineSet {
+    EA: Deadline!
+    ED: Deadline!
+    ED2: Deadline!
+    RD: Deadline!
+}
+
+type Prompt {
+    wordCount: Int
+    question: String
+    optional: Boolean
+}
+
+type Application {
+    prompts: [Prompt!]
+    likelihood: Likelihood!
+    collegeName: String!
+    location: String!
+    acceptanceRate: Float! # required info? maybe not?
+    deadlines: DeadlineSet!
 }

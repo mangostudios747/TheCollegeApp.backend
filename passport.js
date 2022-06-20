@@ -1,26 +1,26 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const { Strategy: GoogleTokenStrategy } = require('passport-google-token');
+const { usersCollection, passwordsCollection, genID } = require('./mongodb')
+var LocalStrategy = require('passport-local').Strategy;
+var crypto = require('crypto');
 
-const GoogleTokenStrategyCallback = (accessToken, refreshToken, profile, done) => done(null, {
-    accessToken,
-    refreshToken,
-    profile,
-});
 
-passport.use(new GoogleTokenStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-}, GoogleTokenStrategyCallback));
+passport.use(
+    new LocalStrategy(async function verify(username, password, done) {
+        try {
+            const pc = await passwordsCollection;
+            const user = await pc.findOne({ username, passwordHash: crypto.Hash(password) });
+            if (!user) return done(null, false, { message: 'Incorrect username or password.' });
+            return done(null, user)
+        }
+        catch (err) {
+            return done(err)
+        }
 
-// promisified authenticate functions
+    })
+);
 
-const authenticateGoogle = (req, res) => new Promise((resolve, reject) => {
-    passport.authenticate('google-token', { session: false }, (err, data, info) => {
-        if (err) reject(err);
-        resolve({ data, info });
-    })(req, res);
-});
+const hash = (str) => crypto.createHash('md5').update(str).digest("hex")
 
 const generateJWT = (user) => {
     const today = new Date();
@@ -34,25 +34,17 @@ const generateJWT = (user) => {
     }, 'secret');
 }
 
-const upsertGoogleUser = async function ({ accessToken, refreshToken, profile }) {
-    const User = this;
+const insertUser = async function ({ email, password, username }) {
+    const uc = await usersCollection;
+    const uid = genID();
+    const newUser = await uc.insertOne({
+        _id: uid,
+        username,
+        email,
+        pwHash: hash(password)
+    });
 
-    const user = await User.findOne({ 'social.googleProvider.id': profile.id });
-
-    // no user was found, lets create a new one
-    if (!user) {
-        const newUser = await User.create({
-            name: profile.displayName || `${profile.familyName} ${profile.givenName}`,
-            email: profile.emails[0].value,
-            'social.googleProvider': {
-                id: profile.id,
-                token: accessToken,
-            },
-        });
-
-        return newUser;
-    }
-    return user;
+    return newUser;
 };
 
-module.exports = { authenticateGoogle };
+module.exports = { insertUser, generateJWT, hash };
