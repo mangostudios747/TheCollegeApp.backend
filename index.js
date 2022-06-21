@@ -2,6 +2,7 @@ require('dotenv').config()
 const { ApolloServer } = require('apollo-server');
 const { loadFiles } = require('@graphql-tools/load-files')
 const { insertUser, generateJWT, hash } = require('./passport');
+const { sendVerificationEmail } = require('./mail')
 const mdb = require('./mongodb')
 
 const resolvers = {
@@ -11,22 +12,30 @@ const resolvers = {
         }
     },
     Mutation: {
-        createUserAndSendVerification(_, { username, email, password }, {req, res}){
-            const user = insertUser({email, password, username})
+        async createUserAndSendVerification(_, { username, email, password },){ // ok this works
+            const user = await insertUser({email, password, username})
             const jwt = generateJWT(user);
             // send verification email
-            
-            // should return jwt tho
+            sendVerificationEmail(user.email, user.verificationToken, 'localhost:3000')
+            // should return jwt
             return {
                 jwt
             }
         },
         verifyUserEmail(_, { token }){
+            // look up the user by token
+
+            // set their boolean to true
+
+            // return a jwt so the client logs in
 
         },
         login(_, { username, password }){
             // hash pw
+
             // check if that combo exists
+
+            // return a jwt
         },
     }
 };

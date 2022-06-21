@@ -20,8 +20,8 @@ passport.use(
     })
 );
 
-const hash = (str) => crypto.createHash('md5').update(str).digest("hex")
-
+const hash = (str) => crypto.createHash('md5').update(str).digest("hex");
+const randString = ()=> require('crypto').randomBytes(48).toString('hex');
 const generateJWT = (user) => {
     const today = new Date();
     const expirationDate = new Date(today);
@@ -37,14 +37,17 @@ const generateJWT = (user) => {
 const insertUser = async function ({ email, password, username }) {
     const uc = await usersCollection;
     const uid = genID();
-    const newUser = await uc.insertOne({
+    const newUser = {
         _id: uid,
         username,
         email,
+        emailVerified: false,
+        verificationToken: randString(),
         pwHash: hash(password)
-    });
+    } 
+    await uc.insertOne(newUser);
 
     return newUser;
 };
 
-module.exports = { insertUser, generateJWT, hash };
+module.exports = { insertUser, generateJWT, hash, randString };
