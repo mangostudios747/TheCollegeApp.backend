@@ -50,7 +50,7 @@ const resolvers = {
         },
     }
 };
-
+console.log(resolvers)
 async function main() {
     const server = new ApolloServer({
         typeDefs: await loadFiles('./locations.graphql'),
@@ -71,5 +71,7 @@ async function main() {
         console.log(`🚀 Server ready at ${url}`);
     });
 }
+
+main()
 
 module.exports = main
