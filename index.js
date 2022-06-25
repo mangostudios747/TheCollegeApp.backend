@@ -1,5 +1,9 @@
 require('dotenv').config()
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer, gql } = require("apollo-server-express");
+const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
+const http = require("http");
+const express = require("express");
+const cors = require("cors");
 const { loadFiles } = require('@graphql-tools/load-files')
 const { insertUser, generateJWT, hash } = require('./passport');
 const { sendVerificationEmail } = require('./mail')
@@ -51,10 +55,15 @@ const resolvers = {
     }
 };
 console.log(resolvers)
-async function main() {
+
+const app = express();app.use(cors());
+app.use(express.json());const httpServer = http.createServer(app);
+
+async function main(app, httpServer) {
     const server = new ApolloServer({
         typeDefs: await loadFiles('./locations.graphql'),
         resolvers,
+        plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
         dataSources: async () => ({
             //tasks: new Tasks(await mdb.tasksCollection)
             users: new mdb.Users(await mdb.usersCollection)
@@ -67,11 +76,11 @@ async function main() {
         },
     });
 
-    server.listen(4000).then(({ url }) => {
-        console.log(`🚀 Server ready at ${url}`);
-    });
+    await server.start()
+    server.applyMiddleware({ app });
+    //console.log(`🚀 Server ready at ${url}`);
 }
 
-main()
+main(app, httpServer);
 
-module.exports = main
+module.exports = httpServer;
