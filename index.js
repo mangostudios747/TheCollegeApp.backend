@@ -71,4 +71,5 @@ async function main() {
         console.log(`🚀 Server ready at ${url}`);
     });
 }
-main()
+
+module.exports = main
