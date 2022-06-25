@@ -5,17 +5,13 @@ const mailTransport = nodemailer.createTransport({
         user: 'frozenmango747@gmail.com',
         pass: process.env.GMAIL_PASS
     }
-    
+
 });
-
- 
-
 
 
 function sendVerificationEmail(to, token, host){
-    link = "http://" + host + "/verify?id=" + token;
+    const link = "http://" + host + "/verify?id=" + token;
     const mail = {
-
         from: 'tango@frozenmango747.com',
         to,
         subject: 'test',
@@ -195,10 +191,9 @@ function sendVerificationEmail(to, token, host){
             </table>
           </body>
         </html>`
-    
     };
-    
-    mailTransport.sendMail(mail);  
+
+    mailTransport.sendMail(mail);
 }
 
 module.exports = {

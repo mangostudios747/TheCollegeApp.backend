@@ -1,17 +1,29 @@
 scalar Date
-type Query {
-    test: String
+
+schema {
+  query: Query
+  mutation: Mutation
 }
 
-type Temp {
-    jwt: ID!
+type Query {
+    test: String
+    me: User
+}
 
+enum AuthError {
+    INCORRECT_CREDENTIALS
+    MISSING_PARAMS
+}
+
+type AuthResponse {
+    jwt: ID
+    error: AuthError
 }
 
 type Mutation {
-    createUserAndSendVerification(email: String!, password: String!, username: String!): Temp # JWT
-    verifyUserEmail(token: ID!): User
-    login(username: String!, password: String!): User
+    createUserAndSendVerification(email: String!, password: String!, username: String!): AuthResponse # JWT
+    verifyUserEmail(token: ID!): Boolean
+    login(username: String!, password: String!): AuthResponse
 }
 
 type User {
@@ -20,7 +32,7 @@ type User {
     email: String!
     pwHash: String!
     applications: [Application!]
-    emailValidated: Boolean!
+    emailVerified: Boolean!
 }
 
 enum Likelihood {

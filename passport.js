@@ -34,6 +34,8 @@ const generateJWT = (user) => {
     }, 'secret');
 }
 
+
+
 const insertUser = async function ({ email, password, username }) {
     const uc = await usersCollection;
     const uid = genID();

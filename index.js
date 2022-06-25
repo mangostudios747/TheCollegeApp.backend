@@ -9,6 +9,9 @@ const resolvers = {
     Query: {
         test() {
             return "hello world"
+        },
+        me(_, __, {token}){
+
         }
     },
     Mutation: {
@@ -22,20 +25,28 @@ const resolvers = {
                 jwt
             }
         },
-        verifyUserEmail(_, { token }){
+        async verifyUserEmail(_, { token }){
             // look up the user by token
-
             // set their boolean to true
-
-            // return a jwt so the client logs in
+            await (await mdb.usersCollection).findOneAndUpdate({verificationToken: token}, {$set: { emailVerified: true}})
+            // return success!
+            return true
 
         },
-        login(_, { username, password }){
+        async login(_, { username, password }){
             // hash pw
-
+            const pwHash = hash(password)
             // check if that combo exists
-
+            const user = await (await mdb.usersCollection).findOne({username, pwHash})
             // return a jwt
+            if (!user) {
+                return {
+                    error: "INCORRECT_CREDENTIALS"
+                }
+            }
+            return {
+                jwt: generateJWT(user)
+            }
         },
     }
 };
