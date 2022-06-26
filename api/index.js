@@ -57,8 +57,10 @@ const resolvers = {
 };
 
 
-const app = express();app.use(cors());
-app.use(express.json());const httpServer = http.createServer(app);
+const app = express();
+app.use(cors());
+app.use(express.json());
+const httpServer = http.createServer(app);
 
 async function main(app, httpServer) {
     const typeDefs = loadFilesSync(path.join(process.cwd(), 'locations.graphql'));
@@ -82,7 +84,9 @@ async function main(app, httpServer) {
 
     await server.start()
     server.applyMiddleware({ app });
-    //console.log(`🚀 Server ready at ${url}`);
+    await new Promise(resolve => httpServer.listen({ port: 4000 }, resolve));
+
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
 main(app, httpServer);
