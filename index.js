@@ -54,14 +54,17 @@ const resolvers = {
         },
     }
 };
-console.log(resolvers)
+
 
 const app = express();app.use(cors());
 app.use(express.json());const httpServer = http.createServer(app);
 
 async function main(app, httpServer) {
+    const typeDefs = loadFilesSync('./locations.graphql');
+    console.log(typeDefs)
     const server = new ApolloServer({
-        typeDefs: loadFilesSync('./locations.graphql'),
+        cache: "bounded",
+        typeDefs,
         resolvers,
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
         dataSources: async () => ({
