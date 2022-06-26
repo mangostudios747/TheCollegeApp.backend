@@ -61,6 +61,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const httpServer = http.createServer(app);
+app.get('/', function (req, res){
+    res.send("omg hi. The GraphQL server is available <a href='/graphql'>here</a>.")
+})
 
 async function main(app, httpServer) {
     const typeDefs = loadFilesSync(path.join(process.cwd(), 'locations.graphql'));

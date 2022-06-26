@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { MongoDataSource } = require('apollo-datasource-mongodb')
 const uri = process.env.MONGO_URL;
-const mdb =  new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }).connect();
+const mdb =  new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: false, serverApi: ServerApiVersion.v1 }).connect();
 
 
 function genID(){
