@@ -4,6 +4,7 @@ const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 const http = require("http");
 const express = require("express");
 const cors = require("cors");
+const path = require('path')
 const { loadFiles, loadFilesSync } = require('@graphql-tools/load-files')
 const { insertUser, generateJWT, hash } = require('../passport');
 const { sendVerificationEmail } = require('../mail')
@@ -60,7 +61,7 @@ const app = express();app.use(cors());
 app.use(express.json());const httpServer = http.createServer(app);
 
 async function main(app, httpServer) {
-    const typeDefs = loadFilesSync('../locations.graphql');
+    const typeDefs = loadFilesSync(path.join(process.cwd(), 'locations.graphql'));
     console.log(typeDefs)
     const server = new ApolloServer({
         cache: "bounded",
