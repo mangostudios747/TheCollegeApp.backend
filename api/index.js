@@ -5,9 +5,9 @@ const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const { loadFiles, loadFilesSync } = require('@graphql-tools/load-files')
-const { insertUser, generateJWT, hash } = require('./passport');
-const { sendVerificationEmail } = require('./mail')
-const mdb = require('./mongodb')
+const { insertUser, generateJWT, hash } = require('../passport');
+const { sendVerificationEmail } = require('../mail')
+const mdb = require('../mongodb')
 
 const resolvers = {
     Query: {
@@ -60,7 +60,7 @@ const app = express();app.use(cors());
 app.use(express.json());const httpServer = http.createServer(app);
 
 async function main(app, httpServer) {
-    const typeDefs = loadFilesSync('./locations.graphql');
+    const typeDefs = loadFilesSync('../locations.graphql');
     console.log(typeDefs)
     const server = new ApolloServer({
         cache: "bounded",
