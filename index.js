@@ -4,7 +4,7 @@ const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 const http = require("http");
 const express = require("express");
 const cors = require("cors");
-const { loadFiles } = require('@graphql-tools/load-files')
+const { loadFiles, loadFilesSync } = require('@graphql-tools/load-files')
 const { insertUser, generateJWT, hash } = require('./passport');
 const { sendVerificationEmail } = require('./mail')
 const mdb = require('./mongodb')
@@ -61,7 +61,7 @@ app.use(express.json());const httpServer = http.createServer(app);
 
 async function main(app, httpServer) {
     const server = new ApolloServer({
-        typeDefs: await loadFiles('./locations.graphql'),
+        typeDefs: loadFilesSync('./locations.graphql'),
         resolvers,
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
         dataSources: async () => ({

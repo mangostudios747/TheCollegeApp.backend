@@ -4,6 +4,11 @@
     "src": "./index.js",
     "use": "@now/node"
   }],
+  "functions": {
+    "index.js": {
+      "includeFiles": "locations.graphql"
+    }
+  },
   "routes": [
     {
       "src": "/(.*)",
