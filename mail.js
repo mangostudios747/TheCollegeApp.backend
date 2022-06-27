@@ -9,7 +9,7 @@ const mailTransport = nodemailer.createTransport({
 });
 
 
-function sendVerificationEmail(to, token, host){
+async function sendVerificationEmail(to, token, host){
     console.info(`Sending email to ${to}.`)
     const link = "http://" + host + "/verify?id=" + token;
     const mail = {
@@ -193,9 +193,29 @@ function sendVerificationEmail(to, token, host){
           </body>
         </html>`
     };
-
-    mailTransport.sendMail(mail, function (...v) {
-        console.log(v)
+    await new Promise((resolve, reject) => {
+        // verify connection configuration
+        mailTransport.verify(function (error, success) {
+            if (error) {
+                console.log(error);
+                reject(error);
+            } else {
+                console.log("Server is ready to take our messages");
+                resolve(success);
+            }
+        });
+    });
+    await new Promise((resolve, reject) => {
+        // send mail
+        mailTransport.sendMail(mail, (err, info) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                console.log(info);
+                resolve(info);
+            }
+        });
     });
 }
 

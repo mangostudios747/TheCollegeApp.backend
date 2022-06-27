@@ -24,7 +24,7 @@ const resolvers = {
             const user = await insertUser({email, password, username})
             const jwt = generateJWT(user);
             // send verification email
-            sendVerificationEmail(user.email, user.verificationToken, 'localhost:3000')
+            await sendVerificationEmail(user.email, user.verificationToken, 'localhost:3000')
             // should return jwt
             return {
                 jwt
