@@ -200,7 +200,7 @@ async function sendVerificationEmail(to, token, host){
                 console.log(error);
                 reject(error);
             } else {
-                console.log("Server is ready to take our messages");
+                //console.log("Server is ready to take our messages");
                 resolve(success);
             }
         });
@@ -212,7 +212,7 @@ async function sendVerificationEmail(to, token, host){
                 console.error(err);
                 reject(err);
             } else {
-                console.log(info);
+                //console.log(info);
                 resolve(info);
             }
         });
