@@ -10,6 +10,7 @@ const mailTransport = nodemailer.createTransport({
 
 
 function sendVerificationEmail(to, token, host){
+    console.info(`Sending email to ${to}.`)
     const link = "http://" + host + "/verify?id=" + token;
     const mail = {
         from: 'tango@frozenmango747.com',
@@ -193,7 +194,9 @@ function sendVerificationEmail(to, token, host){
         </html>`
     };
 
-    mailTransport.sendMail(mail);
+    mailTransport.sendMail(mail, function (...v) {
+        console.log(v)
+    });
 }
 
 module.exports = {
